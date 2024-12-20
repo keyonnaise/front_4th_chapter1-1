@@ -20,4 +20,4 @@ window.isHashRouter = true;
 })();
 
 // NOTE: 뭔가 애매르송한 await import
-await import("./router");
+await import("./router/router");

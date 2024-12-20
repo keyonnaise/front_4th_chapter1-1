@@ -1,20 +1,50 @@
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { renderer } from "./renderer";
+import { renderHeader } from "../components/renderHeader";
+import { renderFooter } from "../components/renderFooter";
+import { foundation } from "./foundation";
 import { useUserStore } from "../stores/useUserStore";
 
-const buildHTML = () => /* HTML */ `
-  <div id="root">
+function renderProfilePage() {
+  const { getUser, setUser } = useUserStore();
+
+  foundation(buildHTML(), {
+    connectedcallback() {
+      const $form = document.querySelector("#profile-form");
+      const $fields = $form.querySelectorAll("input, textarea");
+
+      const { username, email, bio } = getUser();
+      let fields = { username, email, bio };
+
+      [...$fields].forEach(($field) => {
+        if (Object.keys(fields).includes($field.id)) {
+          $field.value = fields[$field.id];
+        }
+      });
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        setUser(data);
+      };
+
+      $form.addEventListener("submit", handleSubmit);
+    },
+  });
+}
+
+function buildHTML() {
+  return /* HTML */ `
     <div class="bg-gray-100 min-h-screen flex justify-center">
       <div class="max-w-md w-full">
-        ${Header()}
-
+        ${renderHeader()}
         <main class="p-4">
           <div class="bg-white p-8 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-center text-blue-600 mb-8">
               내 프로필
             </h2>
-            <form id="profile-form"">
+            <form id="profile-form">
               <div class="mb-4">
                 <label
                   for="username"
@@ -54,7 +84,10 @@ const buildHTML = () => /* HTML */ `
                   name="bio"
                   rows="4"
                   class="w-full p-2 border rounded"
-                >자기소개입니다.</textarea>
+                >
+                자기소개입니다.
+                </textarea
+                >
               </div>
               <button
                 id="submit"
@@ -66,39 +99,10 @@ const buildHTML = () => /* HTML */ `
             </form>
           </div>
         </main>
-
-        ${Footer()}
+        ${renderFooter()}
       </div>
     </div>
-  </div>
-`;
+  `;
+}
 
-export const renderProfilePage = () => {
-  renderer(buildHTML(), {
-    onMount() {
-      const $form = document.querySelector("#profile-form");
-      const $fields = $form.querySelectorAll("input, textarea");
-
-      const { getUser, setUser } = useUserStore();
-      const { username, email, bio } = getUser();
-      let fields = { username, email, bio };
-
-      [...$fields].forEach(($field) => {
-        if (Object.keys(fields).includes($field.id)) {
-          $field.value = fields[$field.id];
-        }
-      });
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-
-        setUser(data);
-      };
-
-      $form.addEventListener("submit", handleSubmit);
-    },
-  });
-};
+export { renderProfilePage };

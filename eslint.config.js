@@ -9,4 +9,5 @@ export default [
   pluginJs.configs.recommended,
   eslintPluginPrettier,
   eslintConfigPrettier,
+  { rules: { "prettier/prettier": ["error", { endOfLine: "auto" }] } },
 ];

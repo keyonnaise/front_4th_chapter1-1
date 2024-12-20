@@ -1,7 +1,7 @@
 import { createStore } from "./createStore";
 
 /**
- * @typedef {import('../utils/createBrowserRouter').Route} Route
+ * @typedef {import('../router/createBrowserRouter').Route} Route
  */
 
 /**
@@ -9,8 +9,13 @@ import { createStore } from "./createStore";
  * @description
  * - 현재 라우트 정보를 관리하는 스토어 생성
  */
-export const useRouteStore = createStore((set) => ({
+export const useRouteStore = createStore((set, get) => ({
   route: null,
+
+  getRoute() {
+    const { route } = get();
+    return route;
+  },
 
   /**
    * 라우트 설정 함수
